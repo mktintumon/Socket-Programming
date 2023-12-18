@@ -1,4 +1,4 @@
-package Communication;
+package Communication.SingleClient;
 
 import java.io.*;
 import java.net.*;
@@ -6,7 +6,7 @@ import java.net.*;
 public class Client {
     public static void main(String[] args) throws Exception {
         try {
-            Socket socket = new Socket("127.0.0.1", 10001);
+            Socket socket = new Socket("localhost", 5000);
 
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
@@ -16,7 +16,7 @@ public class Client {
             InputStream is = socket.getInputStream();
             BufferedReader receiveRead = new BufferedReader(new InputStreamReader(is));
 
-            System.out.println("Start the communication, type and press Enter key");
+            System.out.println("Start the communication, Type and press Enter key");
 
             String receiveMessage, sendMessage;
             boolean flag = true;

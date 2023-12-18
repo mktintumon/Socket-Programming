@@ -1,4 +1,4 @@
-package Communication;
+package Communication.SingleClient;
 
 import java.io.*;
 import java.net.*;
@@ -43,3 +43,4 @@ public class Server {
         }
     }
 }
+
