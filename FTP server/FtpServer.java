@@ -12,8 +12,11 @@ public class FtpServer {
 
             String path = "C:\\Users\\Mohit\\Desktop\\Socket Programming\\FTP server\\";
             FileInputStream fis = new FileInputStream(path + "mohit.txt");
+            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
             
             int size = (int)fis.available();
+            //out.println(size);
+
             byte[] byteFile = new byte[size];
             fis.read(byteFile , 0 , byteFile.length);
             OutputStream os = socket.getOutputStream();
@@ -21,6 +24,7 @@ public class FtpServer {
             System.out.println("File sent");            
             
             fis.close();
+            out.close();
             ss.close();
         } catch (Exception e) {
             e.printStackTrace();

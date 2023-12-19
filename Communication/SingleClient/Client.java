@@ -6,7 +6,7 @@ import java.net.*;
 public class Client {
     public static void main(String[] args) throws Exception {
         try {
-            Socket socket = new Socket("localhost", 5000);
+            Socket socket = new Socket("192.168.0.165", 7777);
 
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 

@@ -12,7 +12,8 @@ public class FtpClient {
             String path = "C:\\Users\\Mohit\\Desktop\\Socket Programming\\FTP client\\";
             InputStream is = socket.getInputStream();
             FileOutputStream fos = new FileOutputStream(path + "mohit.txt");
-            byte[] byteFile = new byte[48];
+            int size = 43;
+            byte[] byteFile = new byte[size];
             is.read(byteFile , 0 , byteFile.length);
             fos.write(byteFile , 0 , byteFile.length);
             System.out.println("File received successfully");
