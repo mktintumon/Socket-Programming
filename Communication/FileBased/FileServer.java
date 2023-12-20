@@ -4,12 +4,13 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class FileServer {
     public static void main(String[] args) {
         int port = 10001;
-        String baseDirectory = "C:\\Users\\Mohit\\Desktop\\Socket programming";
+        String baseDirectory = "TestFolder/";
 
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             System.out.println("Server listening on port " + port);
@@ -94,8 +95,7 @@ public class FileServer {
 
 
     // WRITES TO THE EXISTING FILE
-    private static void writeFile(DataInputStream dis, DataOutputStream dos, String baseDirectory, String fileName)
-            throws IOException {
+    private static void writeFile(DataInputStream dis, DataOutputStream dos, String baseDirectory, String fileName) throws IOException {
         dos.writeUTF("Enter content to append (type 'done' to finish):");
 
         StringBuilder contentBuilder = new StringBuilder("\n");
@@ -109,6 +109,13 @@ public class FileServer {
         }
 
         String filePath = Paths.get(baseDirectory, fileName).toString();
+        Path file = Paths.get(filePath);
+
+        // Check if the file exists, create it if not
+        if (!Files.exists(file)) {
+            Files.createFile(file);
+        }
+
         Files.write(Paths.get(filePath), contentBuilder.toString().getBytes(), java.nio.file.StandardOpenOption.APPEND);
 
         dos.writeUTF("File appended successfully\n");

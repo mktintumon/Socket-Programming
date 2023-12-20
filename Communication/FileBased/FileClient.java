@@ -34,7 +34,7 @@ public class FileClient {
                             String fileName = dis.readUTF();
                             System.out.println(fileName);
                         }
-                        System.out.println();
+                        System.out.println("/n");
                     } 
                     else {
                         System.out.println("No files in the directory.");
