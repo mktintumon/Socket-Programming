@@ -67,7 +67,7 @@ public class ServerThread extends Thread {
                             + "\n/broadcast --> Chat with all connected clients!"
                             + "\n/help --> Shows lists of available commands! (Message can be left empty)"
                             + "\n/exit --> Getting yourself disconnected! (Message can be left empty)");
-                }
+                }    
 
                 if (messageType.equals("/exit")) {
                     System.out.println();
