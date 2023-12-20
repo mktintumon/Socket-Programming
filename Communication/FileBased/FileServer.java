@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import static java.nio.file.StandardOpenOption.APPEND;
 
 public class FileServer {
     public static void main(String[] args) {
@@ -116,7 +117,7 @@ public class FileServer {
             Files.createFile(file);
         }
 
-        Files.write(Paths.get(filePath), contentBuilder.toString().getBytes(), java.nio.file.StandardOpenOption.APPEND);
+        Files.write(Paths.get(filePath), contentBuilder.toString().getBytes(), APPEND);
 
         dos.writeUTF("File appended successfully\n");
     }

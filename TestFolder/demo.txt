@@ -1,6 +1,5 @@
 Hello my name is Mohit
 I am a Dev Intern
-
 I am a good developer
 
 How are you?
