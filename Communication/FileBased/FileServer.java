@@ -28,32 +28,51 @@ public class FileServer {
         }
     }
 
-
     private static void handleClient(Socket clientSocket, String baseDirectory) {
         try (DataOutputStream dos = new DataOutputStream(clientSocket.getOutputStream());
                 DataInputStream dis = new DataInputStream(clientSocket.getInputStream())) {
 
             while (true) {
                 String command = dis.readUTF();
+
                 if (command.equalsIgnoreCase("exit")) {
                     break;
                 }
 
                 String[] commandParts = command.split(":", 2);
 
-                switch (commandParts[0]) {
+                switch (commandParts[0].trim()) {
                     case "/files":
+
                         listFiles(dos, baseDirectory);
                         break;
                     case "/read":
                         if (commandParts.length == 2) {
-                            readFile(dos, baseDirectory, commandParts[1]);
+                            String safe = commandParts[1].trim();
+                            if (safe.startsWith(".") || safe.startsWith("/")) {
+                                dos.writeInt(0);
+                            } else {
+                                readFile(dos, baseDirectory, commandParts[1]);
+
+                            }
+
                         } else {
                             dos.writeUTF("Invalid command");
                         }
                         break;
                     case "/append":
                         if (commandParts.length == 2) {
+                            String safe = commandParts[1];
+                            String[] extension = safe.split(".");
+
+                            if (safe.startsWith(".") || safe.startsWith("/")) {
+                                dos.writeUTF("Invalid filename!!!");
+                                break;
+                            }
+                            if (extension.length != 2) {
+                                dos.writeUTF("Multiple Extension");
+                                break;
+                            }
                             writeFile(dis, dos, baseDirectory, commandParts[1]);
                         } else {
                             dos.writeUTF("Invalid command");
@@ -62,11 +81,12 @@ public class FileServer {
                     default:
                         dos.writeUTF("Invalid command");
                         break;
+
                 }
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Client left!!!");
         }
     }
 
@@ -88,15 +108,22 @@ public class FileServer {
     // READ THE CONTENTS OF FILE
     private static void readFile(DataOutputStream dos, String baseDirectory, String fileName) throws IOException {
         String filePath = Paths.get(baseDirectory, fileName).toString();
-        byte[] fileContent = Files.readAllBytes(Paths.get(filePath));
 
-        dos.writeInt(fileContent.length);
-        dos.write(fileContent);
+        Path file = Paths.get(filePath);
+        // Check if the file exists, create it if not
+        if (Files.exists(file) == false) {
+            dos.writeInt(0);
+        } else {
+            byte[] fileContent = Files.readAllBytes(Paths.get(filePath));
+
+            dos.writeInt(fileContent.length);
+            dos.write(fileContent);
+        }
     }
 
-
     // WRITES TO THE EXISTING FILE
-    private static void writeFile(DataInputStream dis, DataOutputStream dos, String baseDirectory, String fileName) throws IOException {
+    private static void writeFile(DataInputStream dis, DataOutputStream dos, String baseDirectory, String fileName)
+            throws IOException {
         dos.writeUTF("Enter content to append (type 'done' to finish):");
 
         StringBuilder contentBuilder = new StringBuilder("\n");

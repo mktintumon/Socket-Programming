@@ -20,11 +20,13 @@ public class FileClient {
                 String command = reader.readLine();
                 dos.writeUTF(command);
 
+                String[] commandParts = command.split(":", 2);
+
                 if (command.equalsIgnoreCase("exit")) {
                     break;
                 }
 
-                if (command.startsWith("/files")) {
+                if (command.trim().equals("/files")) {
                     int fileListSize = dis.readInt();
 
                     if (fileListSize > 0) {
@@ -40,7 +42,7 @@ public class FileClient {
                         System.out.println("No files in the directory.");
                     }
                 } 
-                else if (command.startsWith("/read")) {
+                else if (command.startsWith("/read") && commandParts[0].equals("/read")) {
                     int fileSize = dis.readInt();
 
                     if (fileSize > 0) {
@@ -48,13 +50,22 @@ public class FileClient {
                         dis.readFully(fileContent);
                         String content = new String(fileContent);
                         System.out.println("\nFile content:\n" + content);
-                    } 
+                    }
                     else {
-                        System.out.println("File not found or empty.");
+                        System.out.println("File not found or empty.\n");
                     }
                 } 
-                else if (command.startsWith("/append")) {
+                else if (command.startsWith("/append") && commandParts[0].equals("/append")) {
                     String prompt = dis.readUTF();
+                    if(prompt.equalsIgnoreCase("Invalid filename!!!")){
+                        System.out.println("Invalid Filename format\n");
+                        continue;
+                    }
+                    if(prompt.equalsIgnoreCase("Multiple Extension")){
+                        System.out.println("Multiple Extension Not Allowed!!!\n");
+                        continue;
+                    }
+
                     System.out.println(prompt);
 
                     while (true) {
@@ -70,7 +81,8 @@ public class FileClient {
                     System.out.println(response);
                 } 
                 else {
-                    System.out.println("Invalid command");
+                    dis.readUTF();
+                    System.out.println("Invalid command\n");
                 }
             }
 

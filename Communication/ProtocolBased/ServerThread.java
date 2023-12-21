@@ -36,7 +36,7 @@ public class ServerThread extends Thread {
                     break;
                 }
 
-                String[] parts = message.split(">", 3);
+                String[] parts = message.split(":", 3);
                 if (parts.length != 3) {
                     continue;
                 }
