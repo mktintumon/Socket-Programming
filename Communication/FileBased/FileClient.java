@@ -3,7 +3,6 @@ package Communication.FileBased;
 import java.io.*;
 import java.net.Socket;
 
-
 public class FileClient {
     public static void main(String[] args) {
         String serverAddress = "localhost";
@@ -16,8 +15,9 @@ public class FileClient {
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
 
             while (true) {
-                System.out.println("Enter command (/files , /read:filename , /append:filename , exit):");
+                System.out.println("Enter command to run application\n[ /files , /read:filename , /append:filename , /delete:filename, /rename:oldFileName:newFileName, /info:filename , exit ]:");
                 String command = reader.readLine();
+                
                 dos.writeUTF(command);
 
                 String[] commandParts = command.split(":", 2);
@@ -79,6 +79,20 @@ public class FileClient {
 
                     String response = dis.readUTF();
                     System.out.println(response);
+                }
+                else if (command.startsWith("/delete") && commandParts[0].equals("/delete")) {
+
+                    String response = dis.readUTF();
+                    System.out.println(response);
+                }
+                else if (command.startsWith("/rename") && commandParts[0].equals("/rename")) {
+                    String response = dis.readUTF();
+                    System.out.println(response);
+                }
+                else if (command.startsWith("/info") && commandParts[0].equals("/info")) {
+                    String response = dis.readUTF();
+                    System.out.println(response);
+
                 } 
                 else {
                     dis.readUTF();

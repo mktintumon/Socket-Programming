@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
 import static java.nio.file.StandardOpenOption.APPEND;
 
 public class FileServer {
@@ -35,11 +36,13 @@ public class FileServer {
             while (true) {
                 String command = dis.readUTF();
 
+                System.out.println("command -> " + command);
+
                 if (command.equalsIgnoreCase("exit")) {
                     break;
                 }
 
-                String[] commandParts = command.split(":", 2);
+                String[] commandParts = command.split("\\:" , 3);
 
                 switch (commandParts[0].trim()) {
                     case "/files":
@@ -62,14 +65,15 @@ public class FileServer {
                         break;
                     case "/append":
                         if (commandParts.length == 2) {
-                            String safe = commandParts[1];
-                            String[] extension = safe.split(".");
+                            String safeFilename = commandParts[1];
+                            System.out.println(safeFilename);
+                            String[] extension = safeFilename.split("\\.");
 
-                            if (safe.startsWith(".") || safe.startsWith("/")) {
+                            if (safeFilename.startsWith(".") || safeFilename.startsWith("/")) {
                                 dos.writeUTF("Invalid filename!!!");
                                 break;
                             }
-                            if (extension.length != 2) {
+                            if (extension.length > 2) {
                                 dos.writeUTF("Multiple Extension");
                                 break;
                             }
@@ -78,10 +82,30 @@ public class FileServer {
                             dos.writeUTF("Invalid command");
                         }
                         break;
+                    case "/delete":
+                        if (commandParts.length == 2) {
+                            deleteFile(dos, baseDirectory, commandParts[1]);
+                        } else {
+                            dos.writeUTF("Invalid command");
+                        }
+                        break;
+                    case "/rename":
+                        if (commandParts.length == 3) {
+                            renameFile(dis, dos, baseDirectory, commandParts[1],commandParts[2]);
+                        } else {
+                            dos.writeUTF("Invalid command");
+                        }
+                        break;
+                    case "/info":
+                        if (commandParts.length == 2) {
+                            fileInfo(dos, baseDirectory, commandParts[1]);
+                        } else {
+                            dos.writeUTF("Invalid command");
+                        }
+                        break;
                     default:
                         dos.writeUTF("Invalid command");
                         break;
-
                 }
             }
 
@@ -121,7 +145,7 @@ public class FileServer {
         }
     }
 
-    // WRITES TO THE EXISTING FILE
+    // WRITES TO THE EXISTING FILE ELSE CREATES THE NEW ONE
     private static void writeFile(DataInputStream dis, DataOutputStream dos, String baseDirectory, String fileName)
             throws IOException {
         dos.writeUTF("Enter content to append (type 'done' to finish):");
@@ -147,5 +171,47 @@ public class FileServer {
         Files.write(Paths.get(filePath), contentBuilder.toString().getBytes(), APPEND);
 
         dos.writeUTF("File appended successfully\n");
+    }
+
+    // DELETES THE FILE SPECIFIED
+    private static void deleteFile(DataOutputStream dos, String baseDirectory, String fileName) throws IOException {
+        String filePath = Paths.get(baseDirectory, fileName).toString();
+        Path file = Paths.get(filePath);
+
+        if (Files.exists(file)) {
+            Files.delete(file);
+            dos.writeUTF("File deleted successfully\n");
+        } else {
+            dos.writeUTF("File not found\n");
+        }
+    }
+
+    // RENAMES THE FILE SPECIFIED
+    private static void renameFile(DataInputStream dis, DataOutputStream dos, String baseDirectory, String oldName , String newName)
+            throws IOException {
+
+        String oldFilePath = Paths.get(baseDirectory, oldName).toString();
+        String newFilePath = Paths.get(baseDirectory, newName).toString();
+
+        File oldFile = new File(oldFilePath);
+        File newFile = new File(newFilePath);
+
+        if (oldFile.renameTo(newFile)) {
+            dos.writeUTF("File renamed successfully\n");
+        } else {
+            dos.writeUTF("Error renaming file\n");
+        }
+    }
+
+    // GET INFO OF SPECIFIED FILE
+    private static void fileInfo(DataOutputStream dos, String baseDirectory, String fileName) throws IOException {
+        String filePath = Paths.get(baseDirectory, fileName).toString();
+        Path file = Paths.get(filePath);
+
+        if (Files.exists(file)) {
+            dos.writeUTF("File information:\n size:" + Files.size(file) + " bytes\n Last Modified: " + Files.getLastModifiedTime(file) + "\n");
+        } else {
+            dos.writeUTF("File not found\n");
+        }
     }
 }
