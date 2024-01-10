@@ -84,6 +84,11 @@ public class FileServer {
                         break;
                     case "/delete":
                         if (commandParts.length == 2) {
+                             String safeFilename = commandParts[1];
+                            if (safeFilename.startsWith(".") || safeFilename.startsWith("/")) {
+                                dos.writeUTF("Invalid command format!!!");
+                                break;
+                            }
                             deleteFile(dos, baseDirectory, commandParts[1]);
                         } else {
                             dos.writeUTF("Invalid command");
@@ -91,6 +96,11 @@ public class FileServer {
                         break;
                     case "/rename":
                         if (commandParts.length == 3) {
+                            String safeFilename = commandParts[1];
+                            if (safeFilename.startsWith(".") || safeFilename.startsWith("/")) {
+                                dos.writeUTF("Invalid command format!!!");
+                                break;
+                            }
                             renameFile(dis, dos, baseDirectory, commandParts[1],commandParts[2]);
                         } else {
                             dos.writeUTF("Invalid command");
@@ -98,6 +108,11 @@ public class FileServer {
                         break;
                     case "/info":
                         if (commandParts.length == 2) {
+                            String safeFilename = commandParts[1];
+                            if (safeFilename.startsWith(".") || safeFilename.startsWith("/")) {
+                                dos.writeUTF("Invalid command format!!!");
+                                break;
+                            }
                             fileInfo(dos, baseDirectory, commandParts[1]);
                         } else {
                             dos.writeUTF("Invalid command");
@@ -129,6 +144,7 @@ public class FileServer {
         }
     }
 
+
     // READ THE CONTENTS OF FILE
     private static void readFile(DataOutputStream dos, String baseDirectory, String fileName) throws IOException {
         String filePath = Paths.get(baseDirectory, fileName).toString();
@@ -144,6 +160,7 @@ public class FileServer {
             dos.write(fileContent);
         }
     }
+
 
     // WRITES TO THE EXISTING FILE ELSE CREATES THE NEW ONE
     private static void writeFile(DataInputStream dis, DataOutputStream dos, String baseDirectory, String fileName)
@@ -173,6 +190,7 @@ public class FileServer {
         dos.writeUTF("File appended successfully\n");
     }
 
+
     // DELETES THE FILE SPECIFIED
     private static void deleteFile(DataOutputStream dos, String baseDirectory, String fileName) throws IOException {
         String filePath = Paths.get(baseDirectory, fileName).toString();
@@ -185,6 +203,7 @@ public class FileServer {
             dos.writeUTF("File not found\n");
         }
     }
+
 
     // RENAMES THE FILE SPECIFIED
     private static void renameFile(DataInputStream dis, DataOutputStream dos, String baseDirectory, String oldName , String newName)
@@ -203,6 +222,7 @@ public class FileServer {
         }
     }
 
+    
     // GET INFO OF SPECIFIED FILE
     private static void fileInfo(DataOutputStream dos, String baseDirectory, String fileName) throws IOException {
         String filePath = Paths.get(baseDirectory, fileName).toString();

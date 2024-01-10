@@ -14,6 +14,8 @@ public class FileClient {
                 
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
 
+            // PENDIING -->  COPY , MOVE , CLEAR , HELP
+
             while (true) {
                 System.out.println("Enter command to run application\n[ /files , /read:filename , /append:filename , /delete:filename, /rename:oldFileName:newFileName, /info:filename , exit ]:");
                 String command = reader.readLine();
